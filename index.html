@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欸今天午餐吃什麼？</title>
+    <link href="images/media_icon.png" rel="shortcut icon">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen bg-orange-50 font-sans text-slate-800 pb-10">
+
+    <header class="bg-orange-500 text-white p-4 shadow-lg sticky top-0 z-50">
+        <div class="max-w-md mx-auto flex flex-col items-center">
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                <i data-lucide="utensils" class="w-6 h-6"></i>
+                欸今天午餐吃什麼？
+            </h1>
+            <div class="mt-2 flex items-center justify-center bg-orange-600 rounded-full px-6 py-1.5 w-auto shadow-inner border border-orange-400">
+                <i data-lucide="school" class="w-4 h-4 mr-2 text-orange-200"></i>
+                <span class="text-white text-sm font-bold tracking-wide">
+                    國立臺北護理健康大學
+                </span>
+                <input type="hidden" id="schoolInput" value="國立臺北護理健康大學">
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-4 space-y-6">
+        
+        <div id="resultBox" class="bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-slate-200 transition-colors duration-300">
+            <div class="min-h-[10rem] flex flex-col items-center justify-center p-6 text-center bg-slate-50 relative">
+                 <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-400 to-transparent"></div>
+                 
+                 <div id="resultContent" class="z-10 w-full">
+                     <div id="initialText" class="text-slate-400 font-medium">
+                         設定條件後，按下按鈕開始！
+                     </div>
+
+                     <div id="animatingText" class="hidden text-4xl font-bold text-orange-400 animate-pulse">
+                         ...
+                     </div>
+
+                     <div id="finalResult" class="hidden animate-fade-in-up">
+                         <span class="text-sm text-slate-500 mb-1 block">決定就是...</span>
+                         <h2 id="resultName" class="text-3xl font-black text-slate-800 mb-2">店家名稱</h2>
+                         
+                         <div class="flex justify-center gap-2 mb-4 flex-wrap">
+                             <span id="resultStyle" class="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-bold">風格</span>
+                             <span id="resultCategory" class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full font-bold">種類</span>
+                             <span id="resultTime" class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-bold">時間</span>
+                         </div>
+
+                         <!-- 阿護營養師說 (修改版：圖文並茂) -->
+                         <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-4 text-left">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="bg-green-100 p-1.5 rounded-full text-green-600 shrink-0">
+                                    <i data-lucide="sprout" class="w-4 h-4"></i>
+                                </div>
+                                <h4 class="text-xs font-bold text-green-800">健康飲食提醒：</h4>
+                            </div>
+                            
+                            <!-- 修改：改為垂直排列 (flex-col)，讓圖片在下方並放大 -->
+                            <div class="flex flex-col gap-3">
+                                <!-- 文字區塊 -->
+                                <p id="resultHealthTip" class="text-sm text-green-700 leading-relaxed">
+                                    這裡會顯示健康建議...
+                                </p>
+                                <!-- 圖片區塊 (符合多媒體學習原則) -->
+                                <div class="w-full">
+                                    <!-- 修改說明：移除 h-48 和 object-cover，改為 h-auto，讓圖片依原比例完整顯示不裁切 -->
+                                    <img id="resultHealthImg" src="" alt="健康建議圖示" class="w-full h-auto rounded-lg shadow-sm border border-green-100 bg-white">
+                                </div>
+                            </div>
+                         </div>
+
+                         <a 
+                             id="mapLink"
+                             href="#"
+                             target="_blank"
+                             class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition-all transform hover:scale-105 shadow-md"
+                         >
+                             <i data-lucide="map-pin" class="w-4 h-4"></i>
+                             看地圖 / 評論
+                         </a>
+                     </div>
+                 </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm space-y-6">
+            <div class="space-y-2">
+                <label class="text-sm font-bold text-slate-600 flex items-center gap-2">
+                    <i data-lucide="clock" class="w-4 h-4 text-orange-500"></i>
+                    可用時間 / 用餐時段
+                </label>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="relative">
+                            <input type="number" id="timeInput" value="60" class="w-full bg-slate-100 border-none rounded-lg p-2 pl-3 pr-8 focus:ring-2 focus:ring-orange-300 font-mono text-lg outline-none">
+                            <span class="absolute right-3 top-2.5 text-xs text-slate-400">分</span>
+                        </div>
+                        <span class="text-xs text-slate-400 ml-1">包含交通與吃飯</span>
+                    </div>
+                    <select id="mealInput" class="w-full bg-slate-100 border-none rounded-lg p-2 focus:ring-2 focus:ring-orange-300 text-sm font-medium outline-none">
+                        <option value="breakfast">早餐</option>
+                        <option value="lunch" selected>午餐</option>
+                        <option value="dinner">晚餐</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="border-slate-100" />
+
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-600 flex items-center gap-2">
+                        <i data-lucide="chef-hat" class="w-4 h-4 text-orange-500"></i>
+                        想吃哪一類？
+                    </label>
+                    <div class="flex bg-slate-100 p-1 rounded-lg" id="categoryGroup">
+                        <button data-value="all" class="cat-btn flex-1 py-2 text-xs font-bold rounded-md transition-all bg-white text-orange-600 shadow-sm">隨意</button>
+                        <button data-value="noodle" class="cat-btn flex-1 py-2 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-slate-600">麵</button>
+                        <button data-value="rice" class="cat-btn flex-1 py-2 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-slate-600">飯</button>
+                        <button data-value="other" class="cat-btn flex-1 py-2 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-slate-600">其他</button>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-600">異國風味？</label>
+                    <div class="grid grid-cols-5 gap-2" id="styleGroup">
+                        <button data-value="all" class="style-btn py-2 text-xs font-bold rounded-lg border transition-all border-orange-500 bg-orange-50 text-orange-600">都行</button>
+                        <button data-value="tw" class="style-btn py-2 text-xs font-bold rounded-lg border transition-all border-slate-200 text-slate-400 hover:border-orange-300">台式</button>
+                        <button data-value="jp" class="style-btn py-2 text-xs font-bold rounded-lg border transition-all border-slate-200 text-slate-400 hover:border-orange-300">日式</button>
+                        <button data-value="us" class="style-btn py-2 text-xs font-bold rounded-lg border transition-all border-slate-200 text-slate-400 hover:border-orange-300">美式</button>
+                        <button data-value="kr" class="style-btn py-2 text-xs font-bold rounded-lg border transition-all border-slate-200 text-slate-400 hover:border-orange-300">韓式</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3">
+            <button id="btnFilter" class="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-lg font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="search" class="w-6 h-6"></i>
+                <span id="btnText">幫我選！（根據偏好）</span>
+            </button>
+            <button id="btnLucky" class="w-full bg-slate-800 hover:bg-slate-900 text-slate-200 text-sm font-bold py-3 rounded-xl shadow transition-all flex items-center justify-center gap-2 active:scale-95">
+                🎲 隨便都可以！
+            </button>
+        </div>
+
+        <div class="mt-8 bg-green-100 rounded-xl p-4 flex items-center justify-between shadow-sm cursor-pointer hover:bg-green-200 transition-colors" onclick="location.href='health.html'">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-2 rounded-full shadow-sm">
+                    <i data-lucide="book-open-check" class="w-6 h-6 text-green-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-green-800">健康飲食小教室</h3>
+                    <p class="text-xs text-green-600">不知道吃多少？來算算看 BMR！</p>
+                </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-green-500"></i>
+        </div>
+
+        <p class="text-center text-xs text-slate-400 mt-4">© 2025 欸今天午餐吃什麼？x 國北護醫教系</p>
+
+    </main>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
