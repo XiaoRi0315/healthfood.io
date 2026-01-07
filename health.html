@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>健康飲食小教室</title>
     
-    <!-- 修改：加上 ./ 明確指定當前目錄，並增加 type 屬性 -->
-    <link rel="icon" href="./media_icon.png" type="image/png">
-    <link rel="shortcut icon" href="./media_icon.png" type="image/png">
+    <!-- 修正：加入 ?v=2 參數強制瀏覽器重新讀取圖示 (解決快取問題)，並移除 ./ -->
+    <link rel="icon" href="media_icon.png?v=2" type="image/png">
+    <link rel="shortcut icon" href="images/media_icon.png?v=2" type="image/png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -39,7 +39,6 @@
                 基礎代謝率 (BMR) 計算
             </h3>
 
-            <!-- 1. 性別選項移至最上方 -->
             <div class="mb-4">
                 <label class="text-xs font-bold text-slate-500">生理性別</label>
                 <select id="genderInput" class="w-full bg-slate-100 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-300 outline-none text-sm">
@@ -64,8 +63,6 @@
                 <input type="number" id="ageInput" class="w-full bg-slate-100 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-green-300 outline-none" placeholder="20">
             </div>
 
-            <!-- 2. 已刪除活動量選項 -->
-
             <button onclick="calculateBMR()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition-colors mb-4">計算 BMR</button>
             
             <div id="bmrResult" class="hidden bg-green-50 p-3 rounded-lg border border-green-200 text-center">
@@ -81,7 +78,6 @@
                 健康大哉問 (點擊翻牌)
             </h3>
             
-            <!-- 3. 卡片容器：內容將由 JavaScript 隨機生成 -->
             <div id="cardsContainer" class="grid grid-cols-2 gap-3">
                 <!-- Javascript will render cards here -->
             </div>
@@ -98,7 +94,6 @@
     <script>
         lucide.createIcons();
 
-        // --- 1. BMR 計算邏輯 (更新版) ---
         function calculateBMR() {
             const h = parseFloat(document.getElementById('heightInput').value);
             const w = parseFloat(document.getElementById('weightInput').value);
@@ -112,40 +107,28 @@
                 return;
             }
 
-            // Mifflin-St Jeor 公式
-            // 男性：(10 × 體重) + (6.25 × 身高) - (5 × 年齡) + 5
-            // 女性：(10 × 體重) + (6.25 × 身高) - (5 × 年齡) - 161
-            
             let bmr = (10 * w) + (6.25 * h) - (5 * age) + 5; 
             
             if (gender === 'female') {
                 bmr = (10 * w) + (6.25 * h) - (5 * age) - 161;
             }
 
-            // 直接顯示 BMR，不乘活動量
             calSpan.innerText = Math.round(bmr);
             resultDiv.classList.remove('hidden');
         }
 
-        // --- 2. 隨機卡片邏輯 ---
-        
-        // 定義所有卡片資料 (紅、綠、黃燈)
         const cardsData = [
-            // 紅燈
             { icon: '🥤', title: '含糖飲料', type: 'red', desc: '紅燈食物！', detail: '易造成肥胖與血糖波動。' },
             { icon: '🍟', title: '油炸食品', type: 'red', desc: '紅燈食物！', detail: '高油脂、易致發炎。' },
             { icon: '🌭', title: '加工肉品', type: 'red', desc: '紅燈食物！', detail: '鈉含量高，建議少吃。' },
-            // 綠燈
             { icon: '🥬', title: '燙青菜', type: 'green', desc: '綠燈食物！', detail: '增加飽足感與纖維。' },
             { icon: '🍚', title: '糙米/五穀', type: 'green', desc: '綠燈食物！', detail: '富含維生素B群與纖維。' },
             { icon: '🥚', title: '水煮蛋', type: 'green', desc: '綠燈食物！', detail: '優質蛋白質來源。' },
-            // 黃燈 (新增)
             { icon: '🥡', title: '鍋貼/煎餃', type: 'yellow', desc: '黃燈食物！', detail: '高脂肉餡與吸油外皮，注意份量。' },
             { icon: '🍹', title: '果汁', type: 'yellow', desc: '黃燈食物！', detail: '濾渣後纖維少，糖分吸收快。' },
             { icon: '🍛', title: '白飯/白麵', type: 'yellow', desc: '黃燈食物！', detail: '精緻澱粉，建議搭配蔬菜食用。' }
         ];
 
-        // 洗牌函式 (Fisher-Yates Shuffle)
         function shuffle(array) {
             let currentIndex = array.length, randomIndex;
             while (currentIndex != 0) {
@@ -156,16 +139,13 @@
             return array;
         }
 
-        // 渲染卡片
         function renderCards() {
             const container = document.getElementById('cardsContainer');
-            const shuffledCards = shuffle([...cardsData]); // 複製一份再洗牌
+            const shuffledCards = shuffle([...cardsData]); 
             
-            // 為了版面整齊，我們只取前 6 張或 8 張顯示，或者全部顯示。這裡選擇全部顯示。
-            container.innerHTML = ''; // 清空
+            container.innerHTML = ''; 
 
             shuffledCards.forEach(card => {
-                // 根據類型決定背面顏色
                 let backColorClass = 'bg-gray-500';
                 if (card.type === 'red') backColorClass = 'bg-red-500';
                 if (card.type === 'green') backColorClass = 'bg-green-500';
@@ -194,7 +174,6 @@
             });
         }
 
-        // 初始化時執行
         renderCards();
 
     </script>
